@@ -1,0 +1,298 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- --------------------------------------- -->
+
+
+  <!-- ---------------------------------------- -->
+  
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tron Media Player</title>
+
+  <!-- Including bootstrap  -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- Including chart js library  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Including admin css file  -->
+  <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.min.css' %}">
+
+
+  <!-- Including admin js file  -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+
+
+  
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #040404, #1b1b1b); /* Spotify-like background */
+      overflow: hidden;
+      position: relative;
+    }
+
+    nav{
+      position: fixed;
+      top: 0;
+      left: 1px;
+      display:flex;
+    }
+
+    nav div, nav a{
+      color:beige; 
+      background-color: #1b1b1b; 
+      padding: 1rem; 
+      width: fit-content; 
+      border-radius: 10px;
+      margin: 1rem;
+    }
+    
+    nav div:hover, nav a:hover{
+      cursor: pointer;
+      color: initial;
+      text-decoration: none;
+
+      background-color:#1db954;
+    }
+
+    .container {
+      padding-top: 30rem;  
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .login-form, .registration-form, .login-link, .forgot-password-form {
+      margin: auto;
+      width: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .login-form h2, .registration-form h2, .forgot-password-form h2 {
+      margin-bottom: 20px;
+      color: #1db954; /* Spotify green color */
+    }
+
+    .login-form label,
+    .login-form input,
+    .registration-form label,
+    .registration-form input,
+    .login-link,
+    .forgot-password-form label,
+    .forgot-password-form input {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .login-form button,
+    .registration-form button,
+    .forgot-password-form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1db954;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-form button:hover,
+    .registration-form button:hover,
+    .forgot-password-form button:hover {
+      background-color: #0f813b; /* Darker shade of Spotify green */
+    }
+
+    .media-player {
+      width: 50%;
+      text-align: center;
+      display: block;
+      margin-top: 30px;
+    }
+
+    .media-player audio {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .file-drop-area {
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 5px;
+      padding: 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .file-drop-area:hover {
+      border-color: #1db954;
+    }
+
+    .neon-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+      /* Add your neon glow styles here */
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    {% if user.is_authenticated %}
+      <div>{{user.username}}</div>
+      <a href="{% url 'logout' %}">Logout</a>
+    {% endif %}
+  </nav>
+
+
+
+
+<div class="container">
+
+  {% if not user.is_authenticated %}
+    <!-- Login Form -->
+    <div class="login-form">
+      <h2>Login to Tron Media Player</h2>
+      <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+      </form>
+      <div class="forgot-password-link" onclick="showForgotPasswordForm()">Forgot Password?</div>
+      <div onclick="showRegistrationForm()">Registered?</div>
+    </div>
+
+    <!-- Registration Form (Initially Hidden) -->
+    <div class="registration-form" style="display:none;">
+      <h2>Register for Tron Media Player</h2>
+      <form action="{% url 'register' %}" method="post">
+        {% csrf_token %}
+        <label for="reg_username">Username:</label>
+        <input type="text" id="reg_username" name="reg_username" required>
+        <label for="reg_email">Email:</label>
+        <input type="email" id="reg_email" name="reg_email" required>
+        <label for="reg_password">Password:</label>
+        <input type="password" id="reg_password" name="reg_password" required>
+        <button type="submit">Register</button>
+      </form>
+      <div onclick="showLoginForm()">Login page</div>
+    </div>
+
+    <!-- Forgot Password Form (Initially Hidden) -->
+    <div class="forgot-password-form" style="display:none;">
+      <h2>Forgot Password</h2>
+      <form action="#" method="post">
+        {% csrf_token %}
+        <label for="forgot_email">Enter your email:</label>
+        <input type="email" id="forgot_email" name="forgot_email" required>
+        <button type="submit">Reset Password</button>
+      </form>
+      <div class="login-link" onclick="showLoginForm()">Back to Login</div>
+    </div>
+  {% endif %}
+
+  
+{% if user.is_authenticated %}
+  <!-- Media Player -->
+  <div class="media-player">
+    <audio controls>
+      <source src="#" type="audio/mp3"> <!-- Add your audio file source -->
+      Your browser does not support the audio element.
+    </audio>
+
+    <div class="file-drop-area">
+      <p>Drag and drop your audio file here or click to browse</p>
+      <!-- Add your file drop area functionality here -->
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Bar Chart -->
+  <canvas id="myBarChart"></canvas>
+  <!-- Doughnut Chart -->
+  <canvas id="myPieChart"></canvas>
+  <!-- Area Chart  -->
+  <canvas id="myAreaChart"></canvas>
+  
+
+  <script>
+    function toggleForms(showForm) {
+      const loginForm = document.querySelector('.login-form');
+      const registrationForm = document.querySelector('.registration-form');
+      const forgotPasswordForm = document.querySelector('.forgot-password-form');
+      const loginLink = document.querySelector('.login-link');
+
+      loginForm.style.display = 'none';
+      registrationForm.style.display = 'none';
+      forgotPasswordForm.style.display = 'none';
+      
+      if (showForm === 'login') {
+        loginForm.style.display = 'block';
+      } else if (showForm === 'register') {
+        registrationForm.style.display = 'block';
+      } else if (showForm === 'forgot-password') {
+        forgotPasswordForm.style.display = 'block';
+      }
+    }
+
+    function showLoginForm() {
+      toggleForms('login');
+    }
+
+    function showForgotPasswordForm() {
+      toggleForms('forgot-password');
+    }
+
+    function showRegistrationForm() {
+      toggleForms('register');
+    }
+
+  </script>
+  <!-- Include chart-bar-demo.js -->
+  <script src="{% static 'chartjs/chart-area-demo.js' %}"></script>
+  <script src="{% static 'chartjs/chart-bar-demo.js' %}"></script>
+  <script src="{% static 'chartjs/chart-pie-demo.js' %}"></script>
+  <!-- Include Ruang Admin JS -->
+  <script src="{% static 'chartjs/ruang-admin.js' %}"></script>
+  <script src="{% static 'chartjs/ruang-admin.min.js' %}"></script>
+</div>
+
+
+
+</body>
+</html>
