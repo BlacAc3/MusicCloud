@@ -4,14 +4,23 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-
+from .forms import AudioForm
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+from .models import *
 
 # Create your views here.
-def index(request):
+def index(request):  
+    audios = Audio.objects.all().order_by("-date_created")
+    form = AudioForm()
+    playing = audios.first()
     return render (request, "player/index.html", {
         "user":request.user,
+        "audios":audios,
+        "form":form,
+        "playing":playing
     })
 
 def register_user(request):
@@ -62,3 +71,37 @@ def logout_user(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('login')  # Redirect to your login page
+
+def save_audio(request):
+    if request.method == 'POST':
+        form = AudioForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')  # Redirect to a success page
+
+    return redirect("index")
+
+@csrf_exempt
+def handle_uploaded_file(request):
+    if request.method == 'POST' and request.FILES:
+        uploaded_file = request.FILES['file']
+
+        # Save the file to the model
+        audio_instance = Audio.objects.create(file=uploaded_file)
+
+        return JsonResponse({'message': 'File uploaded and saved successfully.'})
+    else:
+        return JsonResponse({'message': 'No file received.'})
+
+def play(request, id):
+    playing = Audio.objects.get(id=id)
+    audios = Audio.objects.all().order_by("date_created")
+    form = AudioForm()
+    user=request.user
+    return render(request, "player/index.html", {
+        "playing":playing,
+        "audios":audios,
+        "form":form,
+        "user":user,
+        
+    })

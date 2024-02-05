@@ -7,5 +7,8 @@ urlpatterns = [
     path("login", views.login_user, name="login"),
     path("register", views.register_user, name="register"),
     path("logout", views.logout_user,name = "logout" ),
+    path("save-audio", views.save_audio, name="save_audio"),
+    path("drag-drop", views.handle_uploaded_file, name="drag-drop"),
+    path("play_audio<int:id>", views.play, name="play"),
 ]
 

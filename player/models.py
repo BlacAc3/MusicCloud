@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
+import os
 
 class Category(models.Model):
     category_name = models.CharField(max_length=30)
@@ -34,3 +35,13 @@ class Borrow(models.Model):
 class Role(models.Model):
     role_name = models.CharField(max_length=30)
 
+class Audio(models.Model):
+    file = models.FileField(upload_to="audio/")
+    title = models.TextField()
+    date_created=models.DateTimeField(default=timezone.now)
+
+    def get_audio_url (self):
+        return self.file.url
+
+    def get_music_name(self):
+        return os.path.basename(str(self.file.name))
