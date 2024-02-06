@@ -44,4 +44,6 @@ class Audio(models.Model):
         return self.file.url
 
     def get_music_name(self):
-        return os.path.basename(str(self.file.name))
+        name = os.path.basename(str(self.file.name)).split("_")
+
+        return " ".join(name)

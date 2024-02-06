@@ -29,6 +29,9 @@ SECRET_KEY = 'django-insecure-qs(iak76z%l6+rv*_)tet5rr#9mgh*#bti26ksvf^=)pm21f16
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -42,7 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # ------------------------
     "player",
+    "tailwind",
+    "theme",
+    "django_browser_reload",
+    "django_unicorn",
+
 ]
+
+TAILWIND_APP_NAME = 'theme'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #New middleware
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'musicplayer.urls'

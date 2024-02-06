@@ -1,8 +1,9 @@
-{% load static %}
-
+{% load static tailwind_tags unicorn %}
 <!DOCTYPE html>
-<html lang="en">
+<html class lang="en">
 <head>
+  {% unicorn_scripts %}
+  {% tailwind_css %}
 
   <!-- --------------------------------------- -->
 
@@ -17,39 +18,39 @@
   <!-- Including bootstrap  -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-  <!-- Including chart js library  -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <!-- Including admin css file  -->
+  <!-- Including admin css file 
   <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.min.css' %}"> -->
 
   <!-- My Css  -->
-  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <!-- <link rel="stylesheet" href="{% static 'player/style.css' %}"> -->
   
-  <!-- Including admin js file  -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-
+  
+    <!-- my javascript  -->
+    <script src="{% static 'player/script.js' %}"></script>
 
   
   <style>
     
   </style>
 </head>
-<body>
-  <nav>
+<body class="flex flex-col w-screen h-screen bg-gradient-to-br bg-gray-950">
+  {% csrf_token %}
+  <nav class="flex flex-row items-center justify-between gap-20 p-2  border-b border-white bg-gray-950  w-full md:p-4">
     {% if user.is_authenticated %}
-      <div>{{user.username}}</div>
-      <a href="{% url 'logout' %}">Logout</a>
+      <h2 id="my-music-list" class="text-green-500 w-full flex items-center transition-colors duration-300 hover:cursor-pointer hover:text-white md:text-2xl text-base ">My Musics</h2>
+      
+      <div  class="flex items-center gap-4">
+        <div class=" p-1 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl font text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600">{{user.username}}</div>
+        <a class="hover:no-underline p-1 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600 " href="{% url 'logout' %}">Logout</a>
+      </div>
     {% endif %}
   </nav>
 
 
 
 
-<div class="container">
 
   {% if not user.is_authenticated %}
     <!-- Login Form -->
@@ -97,57 +98,20 @@
   {% endif %}
 
   
-{% if user.is_authenticated %}
-  <!-- Media Player -->
-  <div class="media-player">
-    <!-- Music list section  -->
-    <!-- <section id="music-section">
-      <ul>
-        {% for audio in audios %}
-          <a href="{% url 'play' audio.id %}"><li>{{audio.get_music_name}}</li></a>
-        {% endfor %}
-      </ul>
-      <form method="post" action="{% url 'save_audio' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Upload</button>
-      </form>
-    </section> -->
-    
-    <!-- Music control section  -->
-    <section id="audio-section">
-      {% if playing %}
-        <p id="now-playing-name">Playing: {{playing.get_music_name}}</p>
-      {% else %}
-        Select a music 
-      {% endif %}
-      
-      <audio controls>
-        <source src="{{playing.file.url}}" type="audio/mp3"> <!-- Add your audio file source -->
-        Your browser does not support the audio element.
-      </audio>
-
-      <div id="drop-area" class="file-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-        <p>Drag and drop your audio file here or click to browse</p>
-        <!-- Add your file drop area functionality here -->
-      </div>
-
-      
-    </section>
-  
-    
-  </div>
+  {% if user.is_authenticated %}
+    {% unicorn "music_page" %}
   {% endif %}
 
-  <!-- Bar Chart -->
-  <canvas id="myBarChart"></canvas>
-  <!-- Doughnut Chart -->
+  <!-- <canvas id="myBarChart"></canvas>
+
   <canvas id="myPieChart"></canvas>
-  <!-- Area Chart  -->
+
   <canvas id="myAreaChart"></canvas>
-  
+  -->
 
   <script>
+    
+
     function toggleForms(showForm) {
       const loginForm = document.querySelector('.login-form');
       const registrationForm = document.querySelector('.registration-form');
@@ -179,6 +143,7 @@
       toggleForms('register');
     }
 
+    // Drag drop functions -------------------------
     function handleDrop(event) {
       event.preventDefault();
       const files = event.dataTransfer.files;
@@ -208,18 +173,21 @@
       })
       .catch(error => console.error('Error:', error));
     }
-    
+
+    // submit form automitically on upload 
+    let fileinput = document.querySelector("#music-input")
+    let musicSubmitForm = document.querySelector("#music-form")
+    fileinput.addEventListener("change", ()=>{
+      musicSubmitForm.submit()
+    })
+
+    let myMusicButton = document.querySelector("#my-music-list");
+    let musicSection = document.querySelector("#music-section");
+    myMusicButton.addEventListener("click", ()=>{
+      musicSection.classList.toggle("hidden")
+    })
     
   </script>
-  <!-- Include chart-bar-demo.js -->
-  <script src="{% static 'chartjs/chart-area-demo.js' %}"></script>
-  <script src="{% static 'chartjs/chart-bar-demo.js' %}"></script>
-  <script src="{% static 'chartjs/chart-pie-demo.js' %}"></script>
-  <!-- Include Ruang Admin JS -->
-  <script src="{% static 'chartjs/ruang-admin.js' %}"></script>
-  <script src="{% static 'chartjs/ruang-admin.min.js' %}"></script>
-</div>
-
 
 
 </body>

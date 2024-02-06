@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+    .shadow-glow {
+        box-shadow: 0 0 2px 2px rgba(81, 255, 81, 0.5);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+    .shadow-glow:hover {
+        box-shadow: 0 0 8px 2px  rgba(81, 255, 81, 0.5);
+    }
+}

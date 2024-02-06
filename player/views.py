@@ -94,8 +94,10 @@ def handle_uploaded_file(request):
         return JsonResponse({'message': 'No file received.'})
 
 def play(request, id):
+    if not Audio.objects.filter(id=id).exists():
+        return redirect("index")
     playing = Audio.objects.get(id=id)
-    audios = Audio.objects.all().order_by("date_created")
+    audios = Audio.objects.all().order_by("-date_created")
     form = AudioForm()
     user=request.user
     return render(request, "player/index.html", {
@@ -103,5 +105,5 @@ def play(request, id):
         "audios":audios,
         "form":form,
         "user":user,
-        
     })
+

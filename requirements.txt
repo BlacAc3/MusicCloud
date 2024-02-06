@@ -1,0 +1,4 @@
+django-unicorn
+django
+django-tailwind
+django-browser-reload
