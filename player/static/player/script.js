@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", ()=>{
+
+
+    
     function toggleForms(showForm) {
         const loginForm = document.querySelector('.login-form');
         const registrationForm = document.querySelector('.registration-form');
@@ -17,8 +20,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
         forgotPasswordForm.style.display = 'flex';
         }
     }
-    
-    
+
+
     //functions to the event listeners
     function showLoginForm() {
         toggleForms('login');
@@ -51,17 +54,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
     }
 
     // Drag drop functions -------------------------
-    function handleDrop(event) {
+    const handleDrop = event => {
         event.preventDefault();
-        const files = event.dataTransfer.files;
+        const {files} = event.dataTransfer;
         handleFiles(files);
-    }
+    };
 
-    function handleDragOver(event) {
+    const handleDragOver = event => {
         event.preventDefault();
-    }
+    };
 
-    function handleFiles(files) {
+    const handleFiles = files => {
         const formData = new FormData();
         for (const file of files) {
         formData.append('file', file);
@@ -76,10 +79,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
         .then(data => {
         // Display the server response (if needed)
         console.log(data);
-        location.reload()
+        window.location.href="/"
         })
         .catch(error => console.error('Error:', error));
-    }
+    };
 
     // submit form automitically on upload 
     let fileinput = document.querySelector("#music-input")
@@ -97,5 +100,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
         myMusicButton.addEventListener("click", ()=>{
             musicSection.classList.toggle("hide")
         })
+    }
+
+    // drop area functionality 
+    let dropArea = document.querySelector("#drop-area")
+    if (dropArea){
+        dropArea.addEventListener("drop", handleDrop)
+        dropArea.addEventListener("dragover", handleDragOver)
     }
 })

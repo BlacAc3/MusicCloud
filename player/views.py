@@ -87,9 +87,11 @@ def handle_uploaded_file(request):
         uploaded_file = request.FILES['file']
 
         # Save the file to the model
-        audio_instance = Audio.objects.create(file=uploaded_file)
-
-        return JsonResponse({'message': 'File uploaded and saved successfully.'})
+        possible_audio=Audio.objects.filter(title=uploaded_file.name).exists()
+        if possible_audio:
+            return JsonResponse({"message":"file already exists"})
+        audio_instance = Audio.objects.create(title=uploaded_file.name, file=uploaded_file)
+        return JsonResponse({'message': f"{uploaded_file.name} has been received"})
     else:
         return JsonResponse({'message': 'No file received.'})
 
