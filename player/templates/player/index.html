@@ -4,96 +4,87 @@
 <head>
   {% unicorn_scripts %}
   {% tailwind_css %}
-
-  <!-- --------------------------------------- -->
-
-
-  <!-- ---------------------------------------- -->
-  
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tron Media Player</title>
-
   <!-- Including bootstrap  -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
-  
-  <!-- Including admin css file 
-  <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'chartcss/ruang-admin.min.css' %}"> -->
-
-  <!-- My Css  -->
-  <!-- <link rel="stylesheet" href="{% static 'player/style.css' %}"> -->
-  
-  
-    <!-- my javascript  -->
-    <script src="{% static 'player/script.js' %}"></script>
-
-  
-  <style>
-    
-  </style>
+  <!-- my javascript  -->
+  <script src="{% static 'player/script.js' %}"></script>
 </head>
-<body class="flex flex-col w-screen h-screen bg-gradient-to-br bg-gray-950">
+<body class="flex flex-col items-center w-screen h-screen bg-gradient-to-br bg-gray-950">
   {% csrf_token %}
+
+  {% if user.is_authenticated %}
   <nav class="flex flex-row items-center justify-between gap-20 p-2  border-b border-white bg-gray-950  w-full md:p-4">
-    {% if user.is_authenticated %}
-      <h2 id="my-music-list" class="text-green-500 w-full flex items-center transition-colors duration-300 hover:cursor-pointer hover:text-white md:text-2xl text-base ">My Musics</h2>
+      <h2 id="my-music-list" class="text-green-500 w-full flex items-center transition-colors duration-300 cursor-pointer hover:text-white md:text-2xl text-base ">My Musics</h2>
       
       <div  class="flex items-center gap-4">
         <div class=" p-1 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl font text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600">{{user.username}}</div>
         <a class="hover:no-underline p-1 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600 " href="{% url 'logout' %}">Logout</a>
       </div>
-    {% endif %}
   </nav>
-
-
-
+  {% endif %}
 
 
   {% if not user.is_authenticated %}
     <!-- Login Form -->
-    <div class="login-form">
-      <h2>Login to Tron Media Player</h2>
-      <form action="{% url 'login' %}" method="post">
+    <div class="
+                login-form w-full max-w-96 flex flex-col items-center gap-4 justify-center h-screen p-1
+                sm:w-2/3 md:w-1/2 md:max-w-full lg:w-2/4 
+                ">
+      <h2 class="text-green-500 text-3xl md:text-5xl font-extrabold">Login to Tron Media Player</h2>
+      <form class="flex w-full p-8 flex-col" action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
+        <label class="text-green-600 w-full" for="username">Username:</label>
+        <input class="transition-all  outline-none duration-500 mb-7 bg-slate-400 w-full rounded-lg focus:ring-0 focus:bg-green-200 
+                      md:p-4 md:rounded-3xl md:text-xl border-none
+                      " type="text" id="username" name="username" required>
+
+        <label class="text-green-600 w-full" for="password">Password:</label>
+        <input class="transition-all  outline-none duration-500 mb-7 bg-slate-400 w-full rounded-lg focus:ring-0 focus:bg-green-200 
+                      md:p-4 md:rounded-3xl md:text-xl border-none
+                      " type="password" id="password" name="password" required>
+        <button class="p-3 text-white transition-colors duration-300 self-center md:w-fit border hover:bg-green-800" type="submit">Login</button>
       </form>
-      <div class="forgot-password-link" onclick="showForgotPasswordForm()">Forgot Password?</div>
-      <div onclick="showRegistrationForm()">Registered?</div>
+      <div class="hover:cursor-pointer hover:text-white transition-colors duration-300 forgot-password-link" id="forgot-password-link" >Forgot Password?</div>
+      <div class="hover:cursor-pointer hover:text-white transition-colors duration-300 forgot-password-link" id="registered" >Registered?</div>
     </div>
 
     <!-- Registration Form (Initially Hidden) -->
-    <div class="registration-form" style="display:none;">
-      <h2>Register for Tron Media Player</h2>
-      <form action="{% url 'register' %}" method="post">
+    <div class="registration-form flex flex-col items-center gap-2 justify-center h-screen p-1" style="display:none;">
+      <h2 class="text-green-500 text-3xl md:text-5xl font-extrabold">Register for Tron Media Player</h2>
+      <form class="flex w-full p-8 flex-col" action="{% url 'register' %}" method="post">
         {% csrf_token %}
-        <label for="reg_username">Username:</label>
-        <input type="text" id="reg_username" name="reg_username" required>
-        <label for="reg_email">Email:</label>
-        <input type="email" id="reg_email" name="reg_email" required>
-        <label for="reg_password">Password:</label>
-        <input type="password" id="reg_password" name="reg_password" required>
-        <button type="submit">Register</button>
+        <label class="text-green-600 w-full" for="reg_username">Username:</label>
+        <input class="transition-all  outline-none duration-500 mb-7 bg-slate-400 w-full rounded-lg focus:ring-0 focus:bg-green-200 
+                      md:p-4 md:rounded-3xl md:text-xl border-none
+                      " type="text" id="reg_username" name="reg_username" required>
+        <label class="text-green-600 w-full" for="reg_email">Email:</label>
+        <input class="transition-all  outline-none duration-500 mb-7 bg-slate-400 w-full rounded-lg focus:ring-0 focus:bg-green-200 
+                      md:p-4 md:rounded-3xl md:text-xl border-none
+                      " type="email" id="reg_email" name="reg_email" required>
+        <label class="text-green-600 w-full" for="reg_password">Password:</label>
+        <input class="transition-all  outline-none duration-500 mb-7 bg-slate-400 w-full rounded-lg focus:ring-0 focus:bg-green-200 
+                      md:p-4 md:rounded-3xl md:text-xl border-none
+                      " type="password" id="reg_password" name="reg_password" required>
+        <button class="p-3 text-white transition-colors duration-300 self-center md:w-fit border hover:bg-green-800" type="submit">Register</button>
       </form>
-      <div onclick="showLoginForm()">Login page</div>
+      <div class="login-link hover:cursor-pointer hover:text-white transition-colors duration-300" >Back to Login page</div>
     </div>
 
     <!-- Forgot Password Form (Initially Hidden) -->
-    <div class="forgot-password-form" style="display:none;">
-      <h2>Forgot Password</h2>
-      <form action="#" method="post">
+    <div class="forgot-password-form flex flex-col items-center gap-2 justify-center h-screen p-1" style="display:none;">
+      <h2 class="text-green-500 text-3xl md:text-5xl font-extrabold" >Forgot Password</h2>
+      <form class="flex w-full p-8 pb-0 flex-col" action="#" method="post">
         {% csrf_token %}
-        <label for="forgot_email">Enter your email:</label>
-        <input type="email" id="forgot_email" name="forgot_email" required>
-        <button type="submit">Reset Password</button>
+        <label class="text-green-600 w-full" for="forgot_email">Enter your email:</label>
+        <input class="transition-all  outline-none duration-500 mb-7 bg-slate-400 w-full rounded-lg focus:ring-0 focus:bg-green-200 
+                      md:p-4 md:rounded-3xl md:text-xl border-none
+                      " type="email" id="forgot_email" name="forgot_email" required>
+        <button class="hover:cursor-pointer hover:text-white transition-colors duration-300" type="submit">Reset Password</button>
       </form>
-      <div class="login-link" onclick="showLoginForm()">Back to Login</div>
+      <div class="login-link hover:cursor-pointer hover:text-white transition-colors duration-300" >Back to Login</div>
     </div>
   {% endif %}
 
@@ -101,94 +92,6 @@
   {% if user.is_authenticated %}
     {% unicorn "music_page" %}
   {% endif %}
-
-  <!-- <canvas id="myBarChart"></canvas>
-
-  <canvas id="myPieChart"></canvas>
-
-  <canvas id="myAreaChart"></canvas>
-  -->
-
-  <script>
-    
-
-    function toggleForms(showForm) {
-      const loginForm = document.querySelector('.login-form');
-      const registrationForm = document.querySelector('.registration-form');
-      const forgotPasswordForm = document.querySelector('.forgot-password-form');
-      const loginLink = document.querySelector('.login-link');
-
-      loginForm.style.display = 'none';
-      registrationForm.style.display = 'none';
-      forgotPasswordForm.style.display = 'none';
-      
-      if (showForm === 'login') {
-        loginForm.style.display = 'block';
-      } else if (showForm === 'register') {
-        registrationForm.style.display = 'block';
-      } else if (showForm === 'forgot-password') {
-        forgotPasswordForm.style.display = 'block';
-      }
-    }
-
-    function showLoginForm() {
-      toggleForms('login');
-    }
-
-    function showForgotPasswordForm() {
-      toggleForms('forgot-password');
-    }
-
-    function showRegistrationForm() {
-      toggleForms('register');
-    }
-
-    // Drag drop functions -------------------------
-    function handleDrop(event) {
-      event.preventDefault();
-      const files = event.dataTransfer.files;
-      handleFiles(files);
-    }
-
-    function handleDragOver(event) {
-      event.preventDefault();
-    }
-
-    function handleFiles(files) {
-      const formData = new FormData();
-      for (const file of files) {
-        formData.append('file', file);
-      }
-
-      // Use fetch to send the files to the server
-      fetch('drag-drop', {
-        method: 'POST',
-        body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Display the server response (if needed)
-        console.log(data);
-        location.reload()
-      })
-      .catch(error => console.error('Error:', error));
-    }
-
-    // submit form automitically on upload 
-    let fileinput = document.querySelector("#music-input")
-    let musicSubmitForm = document.querySelector("#music-form")
-    fileinput.addEventListener("change", ()=>{
-      musicSubmitForm.submit()
-    })
-
-    let myMusicButton = document.querySelector("#my-music-list");
-    let musicSection = document.querySelector("#music-section");
-    myMusicButton.addEventListener("click", ()=>{
-      musicSection.classList.toggle("hidden")
-    })
-    
-  </script>
-
 
 </body>
 </html>
