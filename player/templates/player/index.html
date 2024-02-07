@@ -17,10 +17,9 @@
 
   {% if user.is_authenticated %}
   <nav class="flex flex-row items-center justify-between gap-20 p-2  border-b border-white bg-gray-950  w-full md:p-4">
-      <h2 id="my-music-list" class="text-green-500 w-full flex items-center transition-colors duration-300 cursor-pointer hover:text-white md:text-2xl text-base ">My Musics</h2>
-      
+      <h2 id="my-music-list" class="text-green-500 w-fit flex items-center transition-colors duration-300 cursor-pointer hover:text-white md:text-2xl text-base ">My Musics</h2>
       <div  class="flex items-center gap-4">
-        <div class=" p-1 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl font text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600">{{user.username}}</div>
+        <div class=" p-1 pl-0 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl font text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600">{{user.username}}</div>
         <a class="hover:no-underline p-1 sm:p-3 transition-colors duration-300 rounded-lg md:rounded-xl text-white hover:cursor-pointer text-sm md:text-xl hover:bg-green-600 " href="{% url 'logout' %}">Logout</a>
       </div>
   </nav>

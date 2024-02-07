@@ -4,22 +4,19 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from .forms import AudioForm
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
+import imghdr
 from .models import *
 
 # Create your views here.
 def index(request):  
     audios = Audio.objects.all().order_by("-date_created")
-    form = AudioForm()
     playing = audios.first()
     return render (request, "player/index.html", {
         "user":request.user,
         "audios":audios,
-        "form":form,
         "playing":playing
     })
 
@@ -73,25 +70,38 @@ def logout_user(request):
     return redirect('login')  # Redirect to your login page
 
 def save_audio(request):
-    if request.method == 'POST':
-        form = AudioForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
+    if request.method == 'POST' and request.FILES:
+        uploaded_file = request.FILES['file']
+        # Check if file exists
+        possible_audio=Audio.objects.filter(title=uploaded_file.name).exists()
+        if possible_audio:
             return redirect('index')  # Redirect to a success page
-
-    return redirect("index")
+        # check if file is an audio 
+        if uploaded_file.content_type != "audio/mpeg":
+            return redirect("index")
+        
+            
+        # if not create or upload one 
+        audio_instance = Audio.objects.create(title=uploaded_file.name, file=uploaded_file)
+        return redirect("index")
+    
 
 @csrf_exempt
 def handle_uploaded_file(request):
     if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES['file']
 
-        # Save the file to the model
+        # Check if file exists
         possible_audio=Audio.objects.filter(title=uploaded_file.name).exists()
         if possible_audio:
             return JsonResponse({"message":"file already exists"})
+        # check if it is an audio file
+        if uploaded_file.content_type != "audio/mpeg":
+            return JsonResponse({"message":f"File is an --{uploaded_file.content_type}-- and not an audio file "})
+        
+        # if not create or upload one 
         audio_instance = Audio.objects.create(title=uploaded_file.name, file=uploaded_file)
-        return JsonResponse({'message': f"{uploaded_file.name} has been received"})
+        return JsonResponse({'message': f"--{uploaded_file.name}-- has been received"})
     else:
         return JsonResponse({'message': 'No file received.'})
 
@@ -100,12 +110,11 @@ def play(request, id):
         return redirect("index")
     playing = Audio.objects.get(id=id)
     audios = Audio.objects.all().order_by("-date_created")
-    form = AudioForm()
     user=request.user
     return render(request, "player/index.html", {
         "playing":playing,
         "audios":audios,
-        "form":form,
         "user":user,
     })
+
 
