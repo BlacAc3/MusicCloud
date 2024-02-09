@@ -97,6 +97,20 @@ DATABASES = {
     }
 }
 
+# # Postgres database   
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'URL': 'postgresql://postgres:add2eA5A3C6*5G35edfeEBD11edG64bg@viaduct.proxy.rlwy.net:22551/railway',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'add2eA5A3C6*5G35edfeEBD11edG64bg',
+#         'HOST': 'viaduct.proxy.rlwy.net',
+#         'PORT': 22551,
+#     }
+# }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
