@@ -4,5 +4,6 @@ django-tailwind
 django-browser-reload
 dj-database-url
 psycopg
+psycopg2-binary
 gunicorn
 django-environ
