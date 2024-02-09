@@ -2,3 +2,7 @@ django-unicorn
 django
 django-tailwind
 django-browser-reload
+dj-database-url
+psycopg
+gunicorn
+django-environ
