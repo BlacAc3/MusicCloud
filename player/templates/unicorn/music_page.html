@@ -1,14 +1,14 @@
 <!-- Media Player -->
-<div class="media-player flex justify-between w-full h-full overflow-hidden items-start sm:items-center">
+<div class="media-player relative flex justify-between w-full h-full overflow-hidden items-start sm:items-center">
     <!-- Music list section  -->
     {% if audios %}
-    <section class="fixed backdrop-blur-md hide w-screen  self-start  h-full md:static md:flex md:backdrop-blur-none md:bg-transparent md:w-1/3" id="music-section">
+    <section class="fixed backdrop-blur-md hide w-screen  self-start  h-full md:static md:flex md:backdrop-blur-none md:bg-transparent md:w-1/3 z-20" id="music-section">
         <ul class="pt-5 pb-5 w-full h-full border-r border-white overflow-y-scroll flex flex-col items-center gap-5">
         {% for audio in audios %}
             <li  class="w-4/5 sm:w-1/2 flex justify-between text-white hover:no-underline transition-colors duration-300 hover:bg-green-800 rounded-xl text-sm border text-ellipsis border-green-500 p-3 md:w-3/4">
-                <a class="text-white hover:no-underline overflow-hidden hover:text-slate-600" href="{% url 'play' audio.id %}" >{{audio.get_music_name}}</a>
+                <a class="text-white hover:no-underline overflow-hidden hover:text-slate-600 truncate-ellipsis line-clamp-1" href="{% url 'play' audio.id %}" >{{audio.get_music_name}}</a>
 
-                <a class="size-6 rounded-md p-1 hover:bg-slate-500" href="#">
+                <a class="size-6 min-w-6 rounded-md p-1 hover:bg-slate-500" href="{% url 'delete_audio' audio.id %}">
                     <svg  fill="#99c1f1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="m14.5 3 1 1H19v2H5V4h3.5l1-1h5ZM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM8 9h8v10H8V9Z" clip-rule="evenodd"></path>
                     </svg>
@@ -21,7 +21,18 @@
     
     <!-- Music control section  -->
     <section id="audio-section" class="w-full m-6 flex flex-col gap-2 items-center justify-center">
+
+        <div id="loading-box" class="hide flex w-screen h-screen justify-center items-center fixed top-0 right-0 z-10 backdrop-blur-md">
+            <p class="text-white">Loading</p>
+        </div>
+        
+        
         {% if playing %}
+            <a href="{% url 'delete_audio' playing.id %}">
+                <svg class="absolute top-0 right-0 size-8 m-3 transition-all duration-300 hover:scale-125" fill="#99c1f1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="m14.5 3 1 1H19v2H5V4h3.5l1-1h5ZM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM8 9h8v10H8V9Z" clip-rule="evenodd"></path>
+                </svg>
+            </a>
             <p class="flex w-full flex-col" id="now-playing-name">
                 <p class="m-0 text-green-600 text-left w-full font-bold text-xl sm:text-center  md:w-auto lg:text-2xl xl:text-3xl">Now playing:  </p>
                 <p class="m-0 text-green-600 text-center text-md font-bold rounded-xl  p-4 sm:p-0 border-2 sm:font-normal sm:text-xl  lg:text-xl xl:text-2xl">{{playing.get_music_name}}</p>
@@ -34,14 +45,14 @@
         <!-- ------------------------------------------------------------------- -->
         
         <audio id="audio-bar" controls class="w-full md:w-3/5 rounded-lg m-4">
-            <source src="{{playing.file.url}}" type="audio/mp3"> <!-- Add your audio file source -->
-            Your browser does not support the audio element.
+            <source src="{{ playing.get_audio_url }}" type="audio/mp3"> <!-- Add your audio file source -->
+            Your browser does not support the audio element. 
         </audio>
 
         <!-- ------------------------------------------------------------------- -->
         <form id="music-form" method="POST" action="{% url 'save_audio' %}" enctype=multipart/form-data>
             {% csrf_token %}
-            <label for="music-input" type="file" id="drop-area" class="group shadow-glow flex items-center justify-center file-drop-area hover:border-green-500 hover:cursor-pointer p-20 rounded-2xl" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+            <label for="music-input" type="file" id="drop-area" class="group shadow-glow flex items-center justify-center file-drop-area  hover:cursor-pointer p-20 rounded-2xl" >
                 <p class="transition-all duration-300  group-hover:text-green-600 ">Drag and drop your audio file here or click to browse</p>
                 <!-- Add your file drop area functionality here -->
             </label>

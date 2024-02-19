@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "cosmic-reserve-414412",
+  "private_key_id": "8ad493409a7b6fef1ce8b606c3ec4ca556c5ed73",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC2s23Qy+3IaPBK\nE2FA2T+W63dclI4CcBsA79zsgwPBX5x2NAYBbIUB1e13FRPQzRndKCSCyIi23XKM\nJG/l/wEjjiMF2t9iARU++0J7frJtnfrEawy+HSYyJm0Mej8bAJUDobQeiH+L+qGQ\nQTkzAQ464ou8MxnwMmJSXuxFjQiQXoAvUC9750zgl6vHgnaqokPfF6j+qG0zF6O9\ngnDTgCveYNrA6AL3Lyvv1SULc2SE9SPb63z3AW+BPhXKklAExhX++zY9EOwZLXjp\nZzCBFltnS0SaoXqjAabbK/dfPLELz+3QicsEoNXt3YcI+RzRMhC+y7S2/AnbdnZ4\nHTFZpiidAgMBAAECggEAEEoetjFchdQfaodgUjMciZT8ezdukvaSXcrFIJxM0yq2\nbU6Vo35cvI1powaw0drbnb2Uxclh8SX87tRX2sKaBCTJ6B178cXFcmxeINsqxv3B\nLE6cH/5C19FXwzdKFZr/bke2YsuKTb1+trkuA6dqMKNe0JygySsA27XFbK0WsKJp\ndnsw/mXAMj4WKGN4fuuI7xyi/39ZdYHowp/Buwb1ms1J8VyiY6pgej52n9UTKAS5\nRSjIlqI8+822vCiPHgQ9BCfS80TvwnjB8l9A3o3MnS53Ydq70D8LSDIc8nanqCk6\n+ZkTJEDH9u0zil9Q9JVJpE06BWwV7GF1I+rX9RK6mQKBgQD2t1Ir/HUGAVeKQMgi\npDgQSUy4+18P9Fi51fRrLZkXFHUYISkftm0grZ2SFdWpykEkRDH/rUydVTCLuiio\nOale+nw6HW2YfaZdXpl8nq85iD7uRGLsJCla9yWZ9H1C+whZaYzsuqFKn8reoQXs\nr77F86/iY+WyglNUhWjihVZzeQKBgQC9k27nxbsWRlY/wdLVsG8XxP8JBe7RvAee\nHt2fW7jPjjjKpVQFZtF7Lhw92qcM/eSVWDfDsjnC00srSLrpx+Bf3BkefUoajvE2\nBTmqNeZR5nLit0f6yWr5qFCTK4YQl2UCaKwdHGeyInDJp9JyWET8GsCXqm5lyRSF\nSNlP354RRQKBgEO7QEvjGx1y8N17u3YHL30JIo8GM6rlohYirt9dvVGgxCTDtc6G\n/p6iC0g3xli+tfOG5VMT+JyY7qLtkIveiKkSi1hJC/V5SVsIxYp45hIdXWl8TMwX\ngWL/xsrlXB4vXLNvTskO04jxJXjJLB82gGFH7Vlxo3XGYaoqlgjaIknBAoGANlF6\nI5q6QmWg7N/CY0wMaMkfMhyrExlHLX02jySezYm4qAe7DVkqiJrrqKVv2/8bcdc3\nEzGL71DPZvWN6NJGbfEImX3Yr8dpQcs5fJW5Cpp3LJLLYwY3SpV5kNGVtkdKv+fx\n+N1csOPBYWZenDjCe2HG8S36N9vnr1DyQzqVdekCgYAZecF+GZSLZyAMTOX6xo19\nt1kQ+DEuTQ50/awCYqHugpQwfg5FMeX/kqXbikzx65DGtjSIuA03ZSrxXMFF9C4F\nmuPqCjyGRbDYh6OnsDJS+Go4qaZgJ9aVBkycql40iJnorD6nXGN1l7DP0QI9NlOn\n/7ALsqL0fh8ddlrOnS529g==\n-----END PRIVATE KEY-----\n",
+  "client_email": "tron-media-cloud@cosmic-reserve-414412.iam.gserviceaccount.com",
+  "client_id": "106309471535919264801",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tron-media-cloud%40cosmic-reserve-414412.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

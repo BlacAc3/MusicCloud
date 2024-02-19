@@ -8,12 +8,20 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import imghdr
+from google.cloud import storage
+from django.conf import settings
+import os
 from .models import *
 
+# google cloud setup 
+from storages.backends.gcloud import GoogleCloudStorage
+storage = GoogleCloudStorage()
+
+
 # Create your views here.
-def index(request):  
-    audios = Audio.objects.all().order_by("-date_created")
-    playing = audios.first()
+def index(request): 
+    audios = Audio.objects.filter(user=request.user.id).order_by("-date_created")
+    playing = audios.first() if audios else None
     return render (request, "player/index.html", {
         "user":request.user,
         "audios":audios,
@@ -82,7 +90,15 @@ def save_audio(request):
         
             
         # if not create or upload one 
-        audio_instance = Audio.objects.create(title=uploaded_file.name, file=uploaded_file)
+        audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
+        
+
+        # Upload file to Google Cloud Storage
+        storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
+        bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+        blob = bucket.blob(audio_instance.get_cloud_name())
+        blob.upload_from_file(uploaded_file.file)
+        audio_instance.save()
         return redirect("index")
     
 
@@ -100,7 +116,16 @@ def handle_uploaded_file(request):
             return JsonResponse({"message":f"File is an --{uploaded_file.content_type}-- and not an audio file "})
         
         # if not create or upload one 
-        audio_instance = Audio.objects.create(title=uploaded_file.name, file=uploaded_file)
+        audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
+
+        # Upload file to Google Cloud Storage
+        storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
+        bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+        blob = bucket.blob(audio_instance.get_cloud_name())
+        blob.upload_from_file(uploaded_file.file)
+        audio_instance.save()
+
+
         return JsonResponse({'message': f"--{uploaded_file.name}-- has been received"})
     else:
         return JsonResponse({'message': 'No file received.'})
@@ -117,4 +142,14 @@ def play(request, id):
         "user":user,
     })
 
+def delete_audio(request, id):
+    if not Audio.objects.filter(id=id).exists():
+        return redirect("index")
+    playing = Audio.objects.get(id=id)
 
+    storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
+    bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+    blob = bucket.blob(playing.get_cloud_name())
+    blob.delete()
+    playing.delete()
+    return redirect("index")

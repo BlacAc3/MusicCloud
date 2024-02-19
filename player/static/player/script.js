@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 
     
+    
     function toggleForms(showForm) {
         const loginForm = document.querySelector('.login-form');
         const registrationForm = document.querySelector('.registration-form');
@@ -55,14 +56,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     // Drag drop functions -------------------------
     const handleDrop = event => {
+        let loading = document.getElementById("loading-box")
+        loading.classList.toggle("hide")
+        
+        console.log("File processing")
         event.preventDefault();
         const {files} = event.dataTransfer;
         handleFiles(files);
     };
 
-    const handleDragOver = event => {
-        event.preventDefault();
-    };
 
     const handleFiles = files => {
         const formData = new FormData();
@@ -89,6 +91,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
     let musicSubmitForm = document.querySelector("#music-form")
     if (fileinput){
         fileinput.addEventListener("change", ()=>{
+        let loading = document.getElementById("loading-box")
+        loading.classList.toggle("hide")
         musicSubmitForm.submit()
         })
     }
@@ -106,6 +110,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     let dropArea = document.querySelector("#drop-area")
     if (dropArea){
         dropArea.addEventListener("drop", handleDrop)
-        dropArea.addEventListener("dragover", handleDragOver)
+        dropArea.addEventListener("dragover", (event)=>{
+            event.preventDefault()
+        })
     }
+
+    
 })

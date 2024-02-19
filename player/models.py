@@ -1,7 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
+from google.cloud import storage
 import os
+import uuid
+
 
 class Category(models.Model):
     category_name = models.CharField(max_length=30)
@@ -36,14 +40,25 @@ class Role(models.Model):
     role_name = models.CharField(max_length=30)
 
 class Audio(models.Model):
-    file = models.FileField(upload_to="audio/")
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="musics")
+    unique_identifier = models.UUIDField(default=uuid.uuid4, editable=False)
     title = models.TextField()
     date_created=models.DateTimeField(default=timezone.now)
 
-    def get_audio_url (self):
-        return self.file.url
+    def get_cloud_name(self):
+        return f"{self.id}{self.title}"
+
+    def get_audio_url(self):
+        # Create a GCS client
+        storage_client = storage.Client.from_service_account_json(settings.GS_JSON_KEY_FILE)
+        # Get the bucket
+        bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+        # Construct the path to the file within the bucket
+        blob = bucket.blob(self.get_cloud_name())
+        return blob.public_url
 
     def get_music_name(self):
-        name = os.path.basename(str(self.file.name)).split("_")
-
-        return " ".join(name)
+        parts = str(self.title).split('.')
+        filename_without_extension = parts[:-1]
+        name = os.path.basename(str(filename_without_extension)).split("_")
+        return " ".join(name)[2:-2]

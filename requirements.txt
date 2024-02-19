@@ -8,3 +8,6 @@ psycopg2-binary
 gunicorn
 django-environ
 whitenoise
+google-cloud-storage
+google-api-python-client
+django-storages

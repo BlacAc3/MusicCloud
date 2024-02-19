@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import environ
 import dj_database_url
+from google.oauth2 import service_account
 
 #environment variables
 env = environ.Env()
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     "django_browser_reload",
     "django_unicorn",
     'whitenoise.runserver_nostatic',
+    "storages",
 
 ]
 
@@ -99,32 +101,23 @@ WSGI_APPLICATION = 'musicplayer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-#SQLite database setup
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+# SQLite database setup
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+# PostgreSQL database setup 
 
 DATABASES = {
-	"default": dj_database_url.parse(env("DATABASE_URL"))
+    "default": dj_database_url.parse(env("DATABASE_URL"))
 }
 
 
 
-# # Postgres database   
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'URL': 'postgresql://postgres:add2eA5A3C6*5G35edfeEBD11edG64bg@viaduct.proxy.rlwy.net:22551/railway',
-#         'NAME': 'railway',
-#         'USER': 'postgres',
-#         'PASSWORD': 'add2eA5A3C6*5G35edfeEBD11edG64bg',
-#         'HOST': 'viaduct.proxy.rlwy.net',
-#         'PORT': 22551,
-#     }
-# }
 
 
 
@@ -173,5 +166,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #Media storage
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL="/media/"
+
+from google.cloud import storage
+# Google Bucket storage
+GS_JSON_KEY_FILE = os.path.join(BASE_DIR, 'cosmic-reserve-414412-8ad493409a7b.json')
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GS_JSON_KEY_FILE)
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+GS_BUCKET_NAME = 'tron-media-bucket'
