@@ -34,7 +34,7 @@
                 </svg>
             </a>
             <p class="flex w-full flex-col" id="now-playing-name">
-                <p class="m-0 text-green-600 text-left w-full font-bold text-xl sm:text-center  md:w-auto lg:text-2xl xl:text-3xl">Now playing:  </p>
+                <p class="m-0 text-green-600 text-left w-full font-bold text-xl hidden sm:block sm:text-center  md:w-auto lg:text-2xl xl:text-3xl">Now playing:  </p>
                 <p class="m-0 text-green-600 text-center text-md font-bold rounded-xl  p-4 sm:p-0 border-2 sm:font-normal sm:text-xl  lg:text-xl xl:text-2xl">{{playing.get_music_name}}</p>
 
             </p>
@@ -48,6 +48,7 @@
             <source src="{{ playing.get_audio_url }}" type="audio/mp3"> <!-- Add your audio file source -->
             Your browser does not support the audio element. 
         </audio>
+        
 
         <!-- ------------------------------------------------------------------- -->
         <form id="music-form" method="POST" action="{% url 'save_audio' %}" enctype=multipart/form-data>

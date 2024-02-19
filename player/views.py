@@ -25,7 +25,7 @@ def index(request):
     return render (request, "player/index.html", {
         "user":request.user,
         "audios":audios,
-        "playing":playing
+        "playing":playing,
     })
 
 def register_user(request):
