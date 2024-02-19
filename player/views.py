@@ -131,7 +131,7 @@ def handle_uploaded_file(request):
         return JsonResponse({'message': 'No file received.'})
 
 def play(request, id):
-    if not Audio.objects.filter(id=id).exists():
+    if not Audio.objects.filter( id=id).exists():
         return redirect("index")
     playing = Audio.objects.get(id=id)
     audios = Audio.objects.all().order_by("-date_created")
