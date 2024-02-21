@@ -60,6 +60,6 @@ class Audio(models.Model):
     def get_music_name(self):
         parts = str(self.title).split('-')
         new_name = " ".join(parts)
-        name = str(parts).split("_")
-
-        return new_name
+        name = new_name.split("_")
+        newer_name = " ".join(name)
+        return newer_name

@@ -40,7 +40,7 @@
             </a>
             <p class="flex w-full flex-col" id="now-playing-name">
                 <p class="m-0 text-green-600 text-left w-full font-bold text-xl hidden sm:block sm:text-center  md:w-auto lg:text-2xl xl:text-3xl">Now playing:  </p>
-                <p class="m-0 text-green-600 text-center text-md font-bold rounded-xl  p-4 sm:p-0 border-2 sm:font-normal sm:text-xl  lg:text-xl xl:text-2xl truncate-ellipsis line-clamp-1">{{playing.get_music_name}}</p>
+                <p class="m-0 text-green-600 text-center text-md font-bold rounded-xl  p-4 sm:p-0 border-2 sm:font-normal sm:text-xl  lg:text-xl xl:text-2xl w-4/5 overflow-hidden truncate md:w-1/2 text-wrap">{{playing.get_music_name|truncatewords:3}}</p>
 
             </p>
         {% else %}
@@ -58,8 +58,8 @@
         <!-- ------------------------------------------------------------------- -->
         <form id="music-form" method="POST" action="{% url 'save_audio' %}" enctype=multipart/form-data>
             {% csrf_token %}
-            <label for="music-input" type="file" id="drop-area" class="group shadow-glow flex items-center justify-center file-drop-area  hover:cursor-pointer p-20 rounded-2xl" >
-                <p class="transition-all duration-300  group-hover:text-green-600 ">Drag and drop your audio file here or click to browse</p>
+            <label for="music-input" type="file" id="drop-area" class="group shadow-glow w-full flex items-center justify-center file-drop-area  hover:cursor-pointer p-20 rounded-2xl" >
+                <p class="transition-all duration-300  group-hover:text-green-600  ">Drag and drop your audio file here or click to browse</p>
                 <!-- Add your file drop area functionality here -->
             </label>
 
