@@ -27,7 +27,6 @@ def index(request):
         "user":request.user,
         "audios":audios,
         "playing":playing,
-        "stream_url":playing.get_audio_url,
     })
 
 def register_user(request):
@@ -142,7 +141,6 @@ def play(request, id):
         "playing":playing,
         "audios":audios,
         "user":user,
-        "stream_url":playing.get_audio_url,
     })
 
 def delete_audio(request, id):
