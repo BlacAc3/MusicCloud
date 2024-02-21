@@ -58,7 +58,8 @@ class Audio(models.Model):
         return blob.public_url
 
     def get_music_name(self):
-        parts = str(self.title).split('.')
-        filename_without_extension = parts[:-1]
-        name = os.path.basename(str(filename_without_extension)).split("_")
-        return " ".join(name)[2:-2]
+        parts = str(self.title).split('-')
+        new_name = " ".join(parts)
+        name = str(parts).split("_")
+
+        return new_name

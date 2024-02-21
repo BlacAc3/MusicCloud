@@ -11,6 +11,21 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <!-- my javascript  -->
   <script src="{% static 'player/script.js' %}"></script>
+
+
+  <style>
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(45deg); }
+      50% { transform: rotate(90deg); }
+      75% { transform: rotate(135deg); }
+      100% { transform: rotate(180deg); }
+    }
+
+    .rotate {
+      animation: rotate 2s linear infinite;
+    }
+  </style>
 </head>
 <body class="flex flex-col items-center w-screen h-screen bg-gradient-to-br bg-gray-950">
   {% csrf_token %}

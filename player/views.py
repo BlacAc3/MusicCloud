@@ -1,3 +1,4 @@
+import contextlib
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -5,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import JsonResponse 
 from django.views.decorators.csrf import csrf_exempt
 import imghdr
 from google.cloud import storage
@@ -26,6 +27,7 @@ def index(request):
         "user":request.user,
         "audios":audios,
         "playing":playing,
+        "stream_url":playing.get_audio_url,
     })
 
 def register_user(request):
@@ -140,6 +142,7 @@ def play(request, id):
         "playing":playing,
         "audios":audios,
         "user":user,
+        "stream_url":playing.get_audio_url,
     })
 
 def delete_audio(request, id):
@@ -150,6 +153,9 @@ def delete_audio(request, id):
     storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
     bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
     blob = bucket.blob(playing.get_cloud_name())
-    blob.delete()
+    try:
+        blob.delete()
+    except:
+        pass
     playing.delete()
     return redirect("index")

@@ -115,5 +115,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
         })
     }
 
+    //Spacebar play function
+    let audio = document.querySelector("#audio-bar")
+    if (audio){
+        document.addEventListener("keydown", event =>{
+            if (event.key === " "){
+                if (audio.paused){
+                    audio.play()
+                }else{
+                    audio.pause()
+                }
+            }
+        })
+    }
+    
+    
     
 })
