@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-qs(iak76z%l6+rv*_)tet5rr#9mgh*#bti26ksvf^=)pm21f16'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 INTERNAL_IPS = [
@@ -101,19 +101,18 @@ WSGI_APPLICATION = 'musicplayer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# SQLite database setup
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# # SQLite database setup
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # PostgreSQL database setup 
-if not DEBUG:
-    DATABASES = {
-        "default": dj_database_url.parse(env("DATABASE_URL"))
+DATABASES = {
+    "default": dj_database_url.parse(env("DATABASE_URL"))
     }
 
 
