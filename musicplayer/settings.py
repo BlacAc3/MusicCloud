@@ -111,10 +111,10 @@ DATABASES = {
 
 
 # PostgreSQL database setup 
-
-DATABASES = {
-    "default": dj_database_url.parse(env("DATABASE_URL"))
-}
+if not DEBUG:
+    DATABASES = {
+        "default": dj_database_url.parse(env("DATABASE_URL"))
+    }
 
 
 

@@ -129,6 +129,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
         })
     }
     
-    
+    // alert message 
+    let alert = document.getElementById("message-alert")
+
     
 })
