@@ -131,6 +131,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
     
     // alert message 
     let alert = document.getElementById("message-alert")
+    if (alert){
+        setTimeout(()=>{
+            alert.classList.toggle("hide")
+        }, 8000)
+    }
 
     
 })

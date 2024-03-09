@@ -133,8 +133,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
     let alert = document.getElementById("message-alert")
     if (alert){
         setTimeout(()=>{
+            alert.classList.toggle("bg-red-300")
             alert.classList.toggle("hide")
-        }, 8000)
+        }, 5000)
     }
 
     

@@ -75,60 +75,67 @@ def logout_user(request):
     logout(request)
     return index(request, message='You have been logged out successfully.')
 
-def save_audio(request):
-    if request.method == 'POST' and request.FILES:
-        uploaded_file = request.FILES['file']
-        # Check if file exists
-        possible_audio=Audio.objects.filter(title=uploaded_file.name).exists()
-        if possible_audio:
-            return index(request, message="Music already exists!")  # Redirect to a success page
-        # check if file is an audio 
-        if uploaded_file.content_type != "audio/mpeg":
-            return index(request, message="Song format not supported!!")
-        
-            
-        # if not create or upload one 
-        audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
-        
 
-        # Upload file to Google Cloud Storage
-        storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
-        bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
-        blob = bucket.blob(audio_instance.get_cloud_name())
-        blob.upload_from_file(uploaded_file.file)
-        audio_instance.save()
-        return index(request, message="Uploaded succesfully!")
-    else:
+def save_audio(request):
+    if request.method != 'POST' or not request.FILES:
         return index(request, message="An Error Occured")
+    
+############################## Initializing Uploaded Files ######################
+    uploaded_file = request.FILES['file']
+
+############################## Running Checks ###################################
+    ### Checking database for Audio! ###
+    if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
+        return index(request, message="Music already exists!")  # Redirect to a success page
+    ### Checking if file is an audio ### 
+    if uploaded_file.content_type != "audio/mpeg":
+        return index(request, message="Song format not supported!!")
+    ### Checking if File is less than 4.1mb ### (Restriction by hosting service "Vercel.com")
+    if uploaded_file.size > 4_100_000:
+        return index(request,  message="File too large! File should be below 4.2mb!")
+
+#################### Handling Upload! ####################################
+    ##### Updating Database ###### 
+    audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
+    ##### Uploading file to Google Cloud Storage #####
+    storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
+    bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+    blob = bucket.blob(audio_instance.get_cloud_name())
+    blob.upload_from_file(uploaded_file.file)
+    audio_instance.save()
+    
+
+    return index(request, message="Uploaded succesfully!")
 
 @csrf_exempt
 def handle_uploaded_file(request):
-    if request.method == 'POST' and request.FILES:
-        uploaded_file = request.FILES['file']
-
-        # Check if file exists
-        possible_audio=Audio.objects.filter(title=uploaded_file.name).exists()
-        if possible_audio:
-            return JsonResponse({"message":"file already exists"})
-        # check if it is an audio file
-        if uploaded_file.content_type != "audio/mpeg":
-            return JsonResponse({"message":f"File is an --{uploaded_file.content_type}-- and not an audio file "})
-        
-        # if not create or upload one 
-        audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
-
-        # Upload file to Google Cloud Storage
-        storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
-        bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
-        blob = bucket.blob(audio_instance.get_cloud_name())
-        blob.upload_from_file(uploaded_file.file)
-        audio_instance.save()
-    
-
-
-        return JsonResponse({'message': f"--{uploaded_file.name}-- has been received"})
-    else:
+    if request.method != 'POST' or not request.FILES:
         return JsonResponse({'message': 'No file received.'})
+    uploaded_file = request.FILES['file']
+
+########################## Running Checks ################################
+    ###### Checking if audio exists #######
+    if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
+        return JsonResponse({"message":"file already exists"})
+    ###### Confirming file type is Audio #######
+    if uploaded_file.content_type != "audio/mpeg":
+        return JsonResponse({"message":f"File is an --{uploaded_file.content_type}-- and not an audio file "})
+    ###### Checking if File is less than 4.1mb  (Restriction by hosting service "Vercel.com") #######
+    if uploaded_file.size > 4_100_000:
+        return index(request,  message="File too large! File should be below 4.2mb!")
+
+
+################# Handling Upload ####################
+    ####### Updating database
+    audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
+    ####### Uploading file to Google Cloud Storage
+    storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
+    bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+    blob = bucket.blob(audio_instance.get_cloud_name())
+    blob.upload_from_file(uploaded_file.file)
+    audio_instance.save()
+
+    return JsonResponse({'message': f"--{uploaded_file.name}-- has been received"})
 
 def play(request, id):
     if not Audio.objects.filter( id=id).exists():
