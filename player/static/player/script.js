@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             if (event.key === " "){
                 if (audio.paused){
                     audio.play()
-                }else{
+                }elif (audio.play){
                     audio.pause()
                 }
             }
