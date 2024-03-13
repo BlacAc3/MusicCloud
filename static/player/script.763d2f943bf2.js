@@ -120,13 +120,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
     if (audio){
         document.addEventListener("keydown", event =>{
             if (event.key === " ") {
-                if (audio.paused){
-                    audio.play()
-                    console.log("Played ...")
-                }else if (!audio.paused){
-                    audio.pause()
-                    console.log("Paused ...")
-                }
+                // if (audio.paused){
+                //     audio.play()
+                //     console.log("Played ...")
+                // }else {
+                //     audio.play()
+                //     console.log("Paused ...")
+                // }
+                audio.play()
             }
         })
     }

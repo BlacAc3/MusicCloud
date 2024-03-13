@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 if (audio.paused){
                     audio.play()
                     console.log("Played ...")
-                }else if (!audio.paused){
+                }else if (audio.play){
                     audio.pause()
                     console.log("Paused ...")
                 }

@@ -119,11 +119,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
     let audio = document.querySelector("#audio-bar")
     if (audio){
         document.addEventListener("keydown", event =>{
-            if (event.key === " "){
+            if (event.key === " ") {
                 if (audio.paused){
                     audio.play()
-                }elif (audio.play){
+                    console.log("Played ...")
+                }else if (!audio.paused){
                     audio.pause()
+                    console.log("Paused ...")
                 }
             }
         })
