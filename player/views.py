@@ -1,3 +1,4 @@
+################ Importing Modules ########################
 import contextlib
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -15,12 +16,11 @@ import os
 from .models import *
 
 
-# google cloud setup 
+####### google cloud setup ########
 from storages.backends.gcloud import GoogleCloudStorage
 storage = GoogleCloudStorage()
 
-
-# Create your views here.
+####### Initializing Index ##############
 def index(request, **kwargs):
     audios = Audio.objects.filter(user=request.user.id).order_by("-date_created")
     playing = audios.first() if audios else None
@@ -32,58 +32,66 @@ def index(request, **kwargs):
         "message":message,
     })
 
+
+
+######## Creating Registration Function ##############
 def register_user(request):
-    if request.method == 'POST':
-        # Get user input from the registration form
-        username :str = request.POST.get('reg_username').lower()
-        password :str = request.POST.get('reg_password')
-        email = request.POST.get('reg_email')
+    ######### Verifying Request ############
+    if request.method != "POST":
+        return redirect("index")
+    ######## Getting User Form Input ##############
+    username :str = request.POST.get('reg_username').lower()
+    password :str = request.POST.get('reg_password')
+    email = request.POST.get('reg_email')
+    ######## Checking username uniqueness ##########
+    if User.objects.filter(username=username).exists():
+        return index(request, message='Username is already taken.')
+    ######## Creating new user ##########
+    new_user = User(username=username, email=email)
+    new_user.set_password(password)
+    new_user.save()
+    return index(request, message = 'Account created successfully.')
 
-        # Check if the username is unique
-        if User.objects.filter(username=username).exists():
-            return index(request, message='Username is already taken.')
 
-        # Create a new user instance
-        new_user = User(username=username, email=email)
-
-        # Set the password for the user (you should hash the password before saving in a real-world scenario)
-        new_user.set_password(password)
-
-        # Save the user instance to the database
-        new_user.save()
-
-        return index(request, message = 'Account created successfully.')
-
-    return redirect("index")
-
+########### Handling Login ##############
 def login_user(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return index(request, message=f"Welcome {username}")  # Redirect to your home page
-            else:
-                return index(request, message='Invalid username or password.')
-    return index(request, message ="Invalid username or password.")
+    if request.method != 'POST':
+        return index(request, message ="Invalid username or password.")
+    form = AuthenticationForm(request, data=request.POST)
+    if form.is_valid():
+        return _extracted_from_login_user_(form, request)
+    return index(request, message = "User not Found")
 
+
+
+########## Verifying User login #############
+def _extracted_from_login_user_(form, request):
+    username = form.cleaned_data.get('username')
+    password = form.cleaned_data.get('password')
+    user = authenticate(request, username=username, password=password)
+    if user is None:
+        return index(request, message='Invalid username or password.')
+    login(request, user)
+    return index(request, message=f"Welcome {username}")  # Redirect to your home page
+
+
+
+############# Logging out User ##############
 @login_required
 def logout_user(request):
     logout(request)
     return index(request, message='You have been logged out successfully.')
 
 
+
+########## Handling Audio Upload from "click" ################
 def save_audio(request):
     if request.method != 'POST' or not request.FILES:
         return index(request, message="An Error Occured")
-    
-############################## Initializing Uploaded Files ######################
+    ######## Initializing Uploaded Files #########
     uploaded_file = request.FILES['file']
 
-############################## Running Checks ###################################
+############### Running Checks ##################
     ### Checking database for Audio! ###
     if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
         return index(request, message="Music already exists!")  # Redirect to a success page
@@ -94,7 +102,7 @@ def save_audio(request):
     if uploaded_file.size > 4_100_000:
         return index(request,  message="File too large! File should be below 4.2mb!")
 
-#################### Handling Upload! ####################################
+############### Handling Upload! ################
     ##### Updating Database ###### 
     audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
     ##### Uploading file to Google Cloud Storage #####
@@ -103,17 +111,18 @@ def save_audio(request):
     blob = bucket.blob(audio_instance.get_cloud_name())
     blob.upload_from_file(uploaded_file.file)
     audio_instance.save()
-    
-
     return index(request, message="Uploaded succesfully!")
 
+
+
+############# Handling Upload From Drag'n'Drop ############
 @csrf_exempt
 def handle_uploaded_file(request):
     if request.method != 'POST' or not request.FILES:
         return JsonResponse({'message': 'No file received.'})
     uploaded_file = request.FILES['file']
 
-########################## Running Checks ################################
+############### Running Checks ###########################
     ###### Checking if audio exists #######
     if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
         return JsonResponse({"message":"file already exists"})
@@ -123,21 +132,23 @@ def handle_uploaded_file(request):
     ###### Checking if File is less than 4.1mb  (Restriction by hosting service "Vercel.com") #######
     if uploaded_file.size > 4_100_000:
         return index(request,  message="File too large! File should be below 4.2mb!")
-
-
+    
 ################# Handling Upload ####################
-    ####### Updating database
+    ####### Updating database ########
     audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
-    ####### Uploading file to Google Cloud Storage
+    ####### Uploading file to Google Cloud Storage #########
     storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
     bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
     blob = bucket.blob(audio_instance.get_cloud_name())
     blob.upload_from_file(uploaded_file.file)
     audio_instance.save()
-
     return JsonResponse({'message': f"--{uploaded_file.name}-- has been received"})
 
+
+
+########## Rendering Selected Audio ###########
 def play(request, id):
+    ####### Checking if Audio Exists ########
     if not Audio.objects.filter( id=id).exists():
         return redirect("index")
     playing = Audio.objects.get(id=id)
@@ -149,7 +160,11 @@ def play(request, id):
         "user":user,
     })
 
+
+
+########## Deleting Selected Audio #############
 def delete_audio(request, id):
+    ####### Checking if Audio Exists ########
     if not Audio.objects.filter(id=id).exists():
         return index(request, message = "Song doesn't exist!")
     playing = Audio.objects.get(id=id)
@@ -157,6 +172,8 @@ def delete_audio(request, id):
     storage_client = storage.client.from_service_account_json(settings.GS_JSON_KEY_FILE)
     bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
     blob = bucket.blob(playing.get_cloud_name())
+    
+    ### If during deletion in cloud if errors(file not found) continue to update the database 
     try:
         blob.delete()
     except:
