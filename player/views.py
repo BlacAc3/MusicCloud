@@ -127,11 +127,11 @@ def handle_uploaded_file(request):
     if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
         return JsonResponse({"message":"file already exists"})
     ###### Confirming file type is Audio #######
-    if uploaded_file.content_type != "audio/mpeg":
+    if uploaded_file.content_type != "audio/mpeg" or uploaded_file.content_type != "audio/mp3" or uploaded_file.content_type != "audio/wav" or uploaded_file.content_type != "audio/ogg" or uploaded_file.content_type != "audio/m4a":
         return JsonResponse({"message":f"File is an --{uploaded_file.content_type}-- and not an audio file "})
     ###### Checking if File is less than 4.1mb  (Restriction by hosting service "Vercel.com") #######
-    if uploaded_file.size > 4_100_000:
-        return index(request,  message="File too large! File should be below 4.2mb!")
+    if uploaded_file.size > 4_000_000:
+        return index(request,  message="File too large! File should be below 4mb!")
     
 ################# Handling Upload ####################
     ####### Updating database ########
