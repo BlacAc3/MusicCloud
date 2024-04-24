@@ -66,7 +66,7 @@ def login_user(request):
 
 ########## Verifying User login #############
 def _extracted_from_login_user_(form, request):
-    username = form.cleaned_data.get('username')
+    username = form.cleaned_data.get('username').lower()
     password = form.cleaned_data.get('password')
     user = authenticate(request, username=username, password=password)
     if user is None:
@@ -84,6 +84,21 @@ def logout_user(request):
 
 
 
+
+def check_audio(request, uploaded_file):
+    if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
+        return index(request, message="Music already exists!")  # Redirect to a success page
+    ### Checking if file is an audio ### 
+    if uploaded_file.content_type != "audio/mpeg" or uploaded_file.content_type != "audio/mp3" or uploaded_file.content_type != "audio/wav" or uploaded_file.content_type != "audio/ogg" or uploaded_file.content_type != "audio/m4a":
+        return index(request, message="Song format not supported!!")
+    ### Checking if File is less than 4.1mb ### (Restriction by hosting service "Vercel.com")
+    if uploaded_file.size > 4_200_000:
+        return index(request,  message="File too large! File should be below 4.2mb!")
+
+
+
+
+
 ########## Handling Audio Upload from "click" ################
 def save_audio(request):
     if request.method != 'POST' or not request.FILES:
@@ -91,17 +106,7 @@ def save_audio(request):
     ######## Initializing Uploaded Files #########
     uploaded_file = request.FILES['file']
 
-############### Running Checks ##################
-    ### Checking database for Audio! ###
-    if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
-        return index(request, message="Music already exists!")  # Redirect to a success page
-    ### Checking if file is an audio ### 
-    if uploaded_file.content_type != "audio/mpeg":
-        return index(request, message="Song format not supported!!")
-    ### Checking if File is less than 4.1mb ### (Restriction by hosting service "Vercel.com")
-    if uploaded_file.size > 4_100_000:
-        return index(request,  message="File too large! File should be below 4.2mb!")
-
+    check_audio(request, uploaded_file)
 ############### Handling Upload! ################
     ##### Updating Database ###### 
     audio_instance = Audio.objects.create(user=request.user, title=uploaded_file.name)
@@ -121,17 +126,7 @@ def handle_uploaded_file(request):
     if request.method != 'POST' or not request.FILES:
         return JsonResponse({'message': 'No file received.'})
     uploaded_file = request.FILES['file']
-
-############### Running Checks ###########################
-    ###### Checking if audio exists #######
-    if possible_audio := Audio.objects.filter(title=uploaded_file.name).exists():
-        return JsonResponse({"message":"file already exists"})
-    ###### Confirming file type is Audio #######
-    if uploaded_file.content_type != "audio/mpeg" or uploaded_file.content_type != "audio/mp3" or uploaded_file.content_type != "audio/wav" or uploaded_file.content_type != "audio/ogg" or uploaded_file.content_type != "audio/m4a":
-        return JsonResponse({"message":f"File is an --{uploaded_file.content_type}-- and not an audio file "})
-    ###### Checking if File is less than 4.1mb  (Restriction by hosting service "Vercel.com") #######
-    if uploaded_file.size > 4_000_000:
-        return index(request,  message="File too large! File should be below 4mb!")
+    check_audio(request, uploaded_file)
     
 ################# Handling Upload ####################
     ####### Updating database ########
