@@ -68,7 +68,7 @@ A Django-based web application that allows users to upload, store, and play musi
 ## 🏗️ Technologies Used
 - **Backend**: Django (Python)
 - **Database**: SQLite (for development), PostgreSQL (for production)
-- **Front-end**: HTML5, CSS, JavaScript
+- **Front-end**: HTML5, CSS (Tailwind CSS), JavaScript
 - **Cloud Storage**: Optional integration with services like Google Cloud Storage for storing media files
 
 ---
