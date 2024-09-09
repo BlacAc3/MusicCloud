@@ -33,8 +33,8 @@ A Django-based web application that allows users to upload, store, and play musi
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/BlacAc3/MusicCloud
-   cd MusicCLoud
+   git clone https://github.com/BlacAc3/Tron-Music
+   cd Tron-Music
    ```
 
 2. **Install dependencies:**
